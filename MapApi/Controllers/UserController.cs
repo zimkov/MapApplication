@@ -31,8 +31,8 @@ namespace MapApi.Controllers
         {
             var user = new User
             {
-                name = name,
-                type = type
+                Name = name,
+                Type = type
             };
             await _context.Users.AddAsync(user);
             await _context.SaveChangesAsync();

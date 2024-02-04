@@ -7,15 +7,15 @@ namespace MapApi.Models
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int id { get; set; }
+        public int Id { get; set; }
 
-        [Column("name")]
+        [Column("Name")]
         [Required]
-        public string name { get; set; } = null!;
+        public string Name { get; set; } = null!;
 
-        [Column("type")]
+        [Column("Type")]
         [Required]
-        public string type { get; set; } = null!;
+        public string Type { get; set; } = null!;
 
     }
 }
