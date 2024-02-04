@@ -27,13 +27,14 @@ namespace MapApi.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddSocialMapObject(int x, int y, string display_name)
+        public async Task<IActionResult> AddSocialMapObject(int x, int y, string display_name, int rating)
         {
             var socialMapObject = new SocialMapObject
             {
                 X = x,
                 Y = y,
-                Display_name = display_name
+                Display_name = display_name,
+                Rating = rating
             };
             await _context.SocialMapObject.AddAsync(socialMapObject);
             await _context.SaveChangesAsync();

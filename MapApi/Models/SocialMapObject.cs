@@ -5,6 +5,8 @@ namespace MapApi.Models
 {
     public class SocialMapObject : MapObject
     {
-        
+        [Column("Rating")]
+        [Required]
+        public int Rating { get; set; }
     }
 }
