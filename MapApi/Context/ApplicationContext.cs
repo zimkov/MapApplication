@@ -9,6 +9,7 @@ namespace MapApi.Context
         public DbSet<MapObject> MapObject => Set<MapObject>();
         public DbSet<SocialMapObject> SocialMapObject => Set<SocialMapObject>();
         public DbSet<RoadMapObject> RoadMapObject => Set<RoadMapObject>();
+        public DbSet<TransportMapObject> TransportMapObject => Set<TransportMapObject>();
 
         public ApplicationContext(DbContextOptions<ApplicationContext> options)
             : base(options)
