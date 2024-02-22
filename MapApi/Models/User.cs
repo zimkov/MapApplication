@@ -17,5 +17,9 @@ namespace MapApi.Models
         [Required]
         public string Type { get; set; } = null!;
 
+        [Column("Email")]
+        [Required]
+        public string Email { get; set; } = null!;
+
     }
 }

@@ -27,12 +27,13 @@ namespace MapApi.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddUser(string name, string type)
+        public async Task<IActionResult> AddUser(string name, string type, string email)
         {
             var user = new User
             {
                 Name = name,
-                Type = type
+                Type = type,
+                Email = email
             };
             await _context.Users.AddAsync(user);
             await _context.SaveChangesAsync();
