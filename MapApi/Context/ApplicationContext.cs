@@ -11,6 +11,7 @@ namespace MapApi.Context
         public DbSet<RoadMapObject> RoadMapObject => Set<RoadMapObject>();
         public DbSet<TransportMapObject> TransportMapObject => Set<TransportMapObject>();
         public DbSet<Comment> Comment => Set<Comment>();
+        public DbSet<Models.Route> Route => Set<Models.Route>();
 
         public ApplicationContext(DbContextOptions<ApplicationContext> options)
             : base(options)

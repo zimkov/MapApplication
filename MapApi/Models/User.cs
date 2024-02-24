@@ -21,5 +21,9 @@ namespace MapApi.Models
         [Required]
         public string Email { get; set; } = null!;
 
+        [Column("ListRoutes")]
+        [Required]
+        public List<Route> ListRoutes { get; set; } = null!;
+
     }
 }
