@@ -25,9 +25,9 @@ namespace MapApi.Controllers
             }
             return await _context.Users.ToListAsync();
         }
-
+       
         [HttpPost]
-        public async Task<IActionResult> AddUser(string name, string type, string email)
+        public async Task<IActionResult> AddUser(string name, UserStatus type, string email)
         {
             var user = new User
             {
@@ -40,5 +40,47 @@ namespace MapApi.Controllers
 
             return Ok();
         }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<User>> GetUserById(int id)
+        {
+            var user = await _context.Users.FindAsync(id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            return user;
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> Delete(int id)
+        {
+            var user = await _context.Users.FindAsync(id);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            _context.Users.Remove(user);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult> Put(int id, User user)
+        {
+            if (id != user.Id)
+            {
+                return BadRequest();
+            }
+            _context.Entry(user).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+
     }
 }

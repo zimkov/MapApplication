@@ -1,5 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
 
 namespace MapApi.Models
 {
@@ -13,9 +15,11 @@ namespace MapApi.Models
         [Required]
         public string Name { get; set; } = null!;
 
+        
         [Column("Type")]
         [Required]
-        public string Type { get; set; } = null!;
+        [JsonConverter(typeof(JsonStringEnumConverter))]
+        public UserStatus? Type { get; set; }
 
         [Column("Email")]
         [Required]
@@ -25,5 +29,14 @@ namespace MapApi.Models
         [Required]
         public List<Route> ListRoutes { get; set; } = null!;
 
+    }
+
+    public enum UserStatus
+    {
+        Колясочник,
+        Опорнодвигательный,
+        Слепота,
+        Глухота,
+        Умственно
     }
 }

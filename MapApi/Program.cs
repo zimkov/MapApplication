@@ -1,5 +1,6 @@
 using MapApi.Context;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,7 +9,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
+//builder.Services.AddSwaggerGen();
 builder.Services.AddSwaggerGen();
+
 
 var connection = "Host=localhost:5432;Username=postgres;Password=123;Database=map";
 builder.Services.AddDbContext<ApplicationContext>(options => options.UseNpgsql(connection));
