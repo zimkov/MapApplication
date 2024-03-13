@@ -38,5 +38,66 @@ namespace MapApi.Controllers
 
             return Ok();
         }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Models.Route>> GetRouteById(int id)
+        {
+            var route = await _context.Route.FindAsync(id);
+            if (route == null)
+            {
+                return NotFound();
+            }
+            return route;
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> Delete(int id)
+        {
+            var route = await _context.Route.FindAsync(id);
+
+            if (route == null)
+            {
+                return NotFound();
+            }
+
+            _context.Route.Remove(route);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult> Put(int id, Models.Route route)
+        {
+            if (id != route.Id)
+            {
+                return BadRequest();
+            }
+
+            _context.Entry(route).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!RouteExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+        }
+
+        private bool RouteExists(int id)
+        {
+            return (_context.Route?.Any(e => e.Id == id)).GetValueOrDefault();
+        }
     }
 }

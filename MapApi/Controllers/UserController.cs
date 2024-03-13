@@ -1,4 +1,5 @@
-﻿using MapApi.Context;
+﻿using AngleSharp.Dom;
+using MapApi.Context;
 using MapApi.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -75,10 +76,31 @@ namespace MapApi.Controllers
             {
                 return BadRequest();
             }
+
             _context.Entry(user).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!UserExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
 
             return NoContent();
+        }
+
+        private bool UserExists(int id)
+        {
+            return (_context.Users?.Any(e => e.Id == id)).GetValueOrDefault();
         }
 
 

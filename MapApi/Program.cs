@@ -1,6 +1,7 @@
 using MapApi.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using VDS.RDF.Query.Algebra;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,7 +12,6 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 //builder.Services.AddSwaggerGen();
 builder.Services.AddSwaggerGen();
-
 
 var connection = "Host=localhost:5432;Username=postgres;Password=123;Database=map";
 builder.Services.AddDbContext<ApplicationContext>(options => options.UseNpgsql(connection));

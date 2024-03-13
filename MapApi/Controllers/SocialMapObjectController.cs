@@ -23,7 +23,7 @@ namespace MapApi.Controllers
             _context = context;
         }
         [HttpGet]
-        [Route("api/SocialMapObject/getbyid")]
+        [Route("/get/ontology")]
         public string GetOntologyObjects()
         {
             //Create a graph to load into
@@ -82,6 +82,67 @@ namespace MapApi.Controllers
             await _context.SaveChangesAsync();
 
             return Ok();
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<SocialMapObject>> GetSocialMapObjectById(int id)
+        {
+            var socialMapObject = await _context.SocialMapObject.FindAsync(id);
+            if (socialMapObject == null)
+            {
+                return NotFound();
+            }
+            return socialMapObject;
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> Delete(int id)
+        {
+            var socialMapObject = await _context.SocialMapObject.FindAsync(id);
+
+            if (socialMapObject == null)
+            {
+                return NotFound();
+            }
+
+            _context.SocialMapObject.Remove(socialMapObject);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult> Put(int id, SocialMapObject socialMapObject)
+        {
+            if (id != socialMapObject.Id)
+            {
+                return BadRequest();
+            }
+
+            _context.Entry(socialMapObject).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!SocialMapObjectExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+        }
+
+        private bool SocialMapObjectExists(int id)
+        {
+            return (_context.SocialMapObject?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }
