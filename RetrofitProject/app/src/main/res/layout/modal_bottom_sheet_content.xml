@@ -6,11 +6,12 @@
     android:background="@drawable/dialogbg">
 
     <ImageView
+        android:id="@+id/mainImage"
         android:layout_width="70dp"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_launcher_foreground"
         android:layout_gravity="center|top"
-        android:scaleType="centerCrop"/>
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_launcher_foreground" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -21,12 +22,12 @@
             android:id="@+id/createText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAlignment="viewStart"
-            android:text="Createds"
-            android:padding="8dp"
-            android:textColor="@color/black"
             android:layout_marginStart="12dp"
             android:layout_marginTop="5dp"
+            android:padding="8dp"
+            android:text="Название"
+            android:textAlignment="viewStart"
+            android:textColor="@color/black"
             android:textSize="25dp" />
 
         <ImageView
@@ -48,17 +49,12 @@
         android:layout_marginTop="10dp"
         android:padding="10dp">
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_launcher_foreground"/>
-
         <TextView
             android:id="@+id/textView1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="30dp"
-            android:text="Upload a video"
+            android:text="Адрес"
             android:textColor="@color/black"
             android:textSize="16sp" />
 
@@ -72,18 +68,14 @@
         android:padding="10dp">
 
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_launcher_foreground"/>
-
         <TextView
+            android:id="@+id/textView2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Create a short"
-            android:textColor="@color/black"
             android:layout_marginLeft="30dp"
-            android:textSize="16sp"/>
+            android:text="Координаты"
+            android:textColor="@color/black"
+            android:textSize="16sp" />
 
     </LinearLayout>
 

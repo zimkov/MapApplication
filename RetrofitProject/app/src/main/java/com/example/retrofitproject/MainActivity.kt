@@ -113,7 +113,7 @@ class MainActivity : AppCompatActivity(){
 
         initPointList()
         pointList.forEach{
-            setMarker(it.geoPoint, it.display_name)
+            setMarker(it.geoPoint, it.display_name, it.address)
         }
         registerForActivityResult(ActivityResultContracts.RequestPermission()) {}
         locationOverlay = MyLocationNewOverlay(GpsMyLocationProvider(this), map)
@@ -126,21 +126,24 @@ class MainActivity : AppCompatActivity(){
     private fun initPointList() {
         var id = 0
         pointList = listOf(
-            MapObject(id++, "ТЮЗ",GeoPoint(51.531498,46.0149078)),
-            MapObject(id++, "Крытый рынок",GeoPoint(51.5318644,46.0220545)),
-            MapObject(id++, "Лицей №3 им АС Пушкина",GeoPoint(51.5295652,46.0204048))
+            MapObject(id++, "ТЮЗ",GeoPoint(51.531498,46.0149078), address = "ул. Киселева, 1, Ю.П"),
+            MapObject(id++, "Крытый рынок",GeoPoint(51.5318644,46.0220545), address = "Саратов, Саратовская обл., 410056"),
+            MapObject(id++, "Лицей №3 им АС Пушкина",GeoPoint(51.5295652,46.0204048), address = "ул. Советская, 46")
         )
     }
 
-    private fun setMarker(geoPoint: GeoPoint, name: String){
+    //Ставит маркер на введенные координаты, присваивает имя и другие данные
+    private fun setMarker(geoPoint: GeoPoint, name: String, adress: String){
         var marker = Marker(map)
         marker.position = geoPoint
         marker.icon = ContextCompat.getDrawable(this, org.osmdroid.library.R.drawable.marker_default)
         marker.title = name
         marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER)
+        //Появление карточки при нажати на объект (Обработка нажатия на маркер)
         marker.setOnMarkerClickListener { marker, mapView ->
             modalBottomSheet.name = name
             modalBottomSheet.geoPoint = geoPoint
+            modalBottomSheet.address = adress
             modalBottomSheet.show(supportFragmentManager, ModalBottomSheet.TAG)
             //Toast.makeText(this, marker.title, Toast.LENGTH_SHORT).show()
             return@setOnMarkerClickListener true
