@@ -13,7 +13,7 @@ builder.Services.AddEndpointsApiExplorer();
 //builder.Services.AddSwaggerGen();
 builder.Services.AddSwaggerGen();
 
-var connection = "Host=localhost:5432;Username=postgres;Password=123;Database=map";
+var connection = "Host=localhost:5432;Username=postgres;Password=1610;Database=map";
 builder.Services.AddDbContext<ApplicationContext>(options => options.UseNpgsql(connection));
 
 var app = builder.Build();
