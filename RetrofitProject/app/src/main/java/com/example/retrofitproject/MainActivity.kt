@@ -4,13 +4,19 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.view.View
-import android.widget.ScrollView
+import android.widget.FrameLayout
 import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.app.ActivityCompat
@@ -39,20 +45,22 @@ import javax.net.ssl.SSLContext
 import javax.net.ssl.SSLSocketFactory
 import javax.net.ssl.TrustManager
 import javax.net.ssl.X509TrustManager
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.FragmentManager
 
-
-class MainActivity : ComponentActivity() {
+@OptIn(ExperimentalMaterial3Api::class)
+class MainActivity : AppCompatActivity(){
     @SuppressLint("SuspiciousIndentation")
     private val REQUEST_PERMISSIONS_REQUEST_CODE = 1
     private lateinit var map : MapView
-    private val ScrollView = findViewById<ScrollView>(R.id.scroll)
-    private val TextView = findViewById<TextView>(R.id.textView)
     private val startPoint = GeoPoint( 51.5406, 46.0086)
     private var pointList: List<MapObject> = listOf()
     private lateinit var locationOverlay: MyLocationNewOverlay
+    private val modalBottomSheet = ModalBottomSheet()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
 
         val interceptor = HttpLoggingInterceptor()
         interceptor.level = HttpLoggingInterceptor.Level.BODY
@@ -86,6 +94,7 @@ class MainActivity : ComponentActivity() {
                 }
             }
             */
+
 
         getInstance().load(this, PreferenceManager.getDefaultSharedPreferences(this))
         setContentView(R.layout.main_screen)
@@ -130,8 +139,9 @@ class MainActivity : ComponentActivity() {
         marker.title = name
         marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER)
         marker.setOnMarkerClickListener { marker, mapView ->
-            ScrollView.visibility = View.VISIBLE
-            TextView.text = name
+            modalBottomSheet.name = name
+            modalBottomSheet.geoPoint = geoPoint
+            modalBottomSheet.show(supportFragmentManager, ModalBottomSheet.TAG)
             //Toast.makeText(this, marker.title, Toast.LENGTH_SHORT).show()
             return@setOnMarkerClickListener true
         }
@@ -148,6 +158,7 @@ class MainActivity : ComponentActivity() {
         super.onPause()
         map.onPause()
     }
+
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
