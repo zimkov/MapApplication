@@ -1,10 +1,14 @@
 package com.example.retrofitproject
 
 import android.annotation.SuppressLint
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.view.View
 import android.widget.FrameLayout
+import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.compose.setContent
@@ -46,6 +50,8 @@ import javax.net.ssl.SSLSocketFactory
 import javax.net.ssl.TrustManager
 import javax.net.ssl.X509TrustManager
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.FragmentManager
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -58,8 +64,20 @@ class MainActivity : AppCompatActivity(){
     private lateinit var locationOverlay: MyLocationNewOverlay
     private val modalBottomSheet = ModalBottomSheet()
 
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val drawerLayout = findViewById<DrawerLayout>(R.id.drawerLayout)
+        val home = findViewById<LinearLayout>(R.id.home)
+        val info = findViewById<LinearLayout>(R.id.info)
+        val exit = findViewById<LinearLayout>(R.id.exit)
+        val settings = findViewById<LinearLayout>(R.id.settings)
+        val share = findViewById<LinearLayout>(R.id.share)
+
+        val imageView = findViewById<ImageView>(R.id.menu)
+
 
 
         val interceptor = HttpLoggingInterceptor()
@@ -160,6 +178,18 @@ class MainActivity : AppCompatActivity(){
     override fun onPause() {
         super.onPause()
         map.onPause()
+        closeDrawer(drawerLayout = findViewById(R.id.drawerLayout))
+    }
+
+
+    fun openDrawer(drawerLayout: DrawerLayout){
+        drawerLayout.openDrawer(GravityCompat.START)
+    }
+
+    fun closeDrawer(drawerLayout: DrawerLayout){
+        if(drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START)
+        }
     }
 
 
