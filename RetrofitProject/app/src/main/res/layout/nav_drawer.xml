@@ -36,104 +36,14 @@
             android:layout_marginBottom="16dp"/>
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/home"
-        android:layout_marginStart="12dp"
-        android:layout_marginTop="12dp"
-        android:orientation="horizontal">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/blue_2"
-            android:text="Home"
-            android:textSize="20sp"
-            android:drawableLeft="@drawable/baseline_account_circle_24"
-            android:drawablePadding="8dp"/>
 
-    </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/settings"
-        android:layout_marginStart="12dp"
-        android:layout_marginTop="12dp"
-        android:orientation="horizontal">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/blue_2"
-            android:text="Настройки"
-            android:textSize="20sp"
-            android:drawableLeft="@drawable/baseline_settings_24"
-            android:drawablePadding="8dp"/>
 
-    </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/share"
-        android:layout_marginStart="12dp"
-        android:layout_marginTop="12dp"
-        android:orientation="horizontal">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/blue_2"
-            android:text="Поделиться"
-            android:textSize="20sp"
-            android:drawableLeft="@drawable/baseline_share_24"
-            android:drawablePadding="8dp"/>
 
-    </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/info"
-        android:layout_marginStart="12dp"
-        android:layout_marginTop="12dp"
-        android:orientation="horizontal">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/blue_2"
-            android:text="Информация"
-            android:textSize="20sp"
-            android:drawableLeft="@drawable/baseline_info_24"
-            android:drawablePadding="8dp"/>
-
-    </LinearLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginTop="12dp"
-        android:background="@color/blue_2"/>
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/exit"
-        android:layout_marginStart="12dp"
-        android:layout_marginTop="12dp"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/blue_2"
-            android:text="Выход"
-            android:textSize="20sp"
-            android:drawableLeft="@drawable/baseline_exit_to_app_24"
-            android:drawablePadding="8dp"/>
-
-    </LinearLayout>
 </LinearLayout>

@@ -3,16 +3,20 @@ package com.example.retrofitproject
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
+import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.preference.PreferenceManager
+import android.view.MenuItem
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import android.widget.Toolbar
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -53,9 +57,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.FragmentManager
+import com.google.android.material.navigation.NavigationView
 
 @OptIn(ExperimentalMaterial3Api::class)
-class MainActivity : AppCompatActivity(){
+class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener{
     @SuppressLint("SuspiciousIndentation")
     private val REQUEST_PERMISSIONS_REQUEST_CODE = 1
     private lateinit var map : MapView
@@ -64,21 +69,32 @@ class MainActivity : AppCompatActivity(){
     private lateinit var locationOverlay: MyLocationNewOverlay
     private val modalBottomSheet = ModalBottomSheet()
 
+    private lateinit var  drawerLayout: DrawerLayout
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val drawerLayout = findViewById<DrawerLayout>(R.id.drawerLayout)
-        val home = findViewById<LinearLayout>(R.id.home)
-        val info = findViewById<LinearLayout>(R.id.info)
-        val exit = findViewById<LinearLayout>(R.id.exit)
-        val settings = findViewById<LinearLayout>(R.id.settings)
-        val share = findViewById<LinearLayout>(R.id.share)
 
-        val imageView = findViewById<ImageView>(R.id.menu)
+        setContentView(R.layout.main_screen)
+        drawerLayout = findViewById(R.id.drawer_layout)
 
+        val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar)
+        setSupportActionBar(toolbar)
 
+        val navigationView = findViewById<NavigationView>(R.id.nav_view)
+        navigationView.setNavigationItemSelectedListener(this)
+
+        val toggle = ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open_nav, R.string.close_nav)
+        drawerLayout.addDrawerListener(toggle)
+        toggle.syncState()
+
+        if(savedInstanceState == null){
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, HomeFragment()).commit()
+            navigationView.setCheckedItem(R.id.nav_home)
+        }
 
         val interceptor = HttpLoggingInterceptor()
         interceptor.level = HttpLoggingInterceptor.Level.BODY
@@ -115,7 +131,7 @@ class MainActivity : AppCompatActivity(){
 
 
         getInstance().load(this, PreferenceManager.getDefaultSharedPreferences(this))
-        setContentView(R.layout.main_screen)
+
         map = findViewById<MapView>(R.id.mapview)
         map.setTileSource(TileSourceFactory.MAPNIK)
 
@@ -140,6 +156,29 @@ class MainActivity : AppCompatActivity(){
 
 
     }
+
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        when(item.itemId){
+            R.id.nav_home -> supportFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, HomeFragment()).commit()
+            R.id.nav_settings -> Toast.makeText(this,"Настройки", Toast.LENGTH_SHORT).show()
+            R.id.nav_info -> Toast.makeText(this,"О приложении", Toast.LENGTH_SHORT).show()
+            R.id.nav_share -> Toast.makeText(this,"Поделиться", Toast.LENGTH_SHORT).show()
+            R.id.nav_logout -> Toast.makeText(this,"Выход из аккаунта", Toast.LENGTH_SHORT).show()
+        }
+        drawerLayout.closeDrawer(GravityCompat.START)
+        return true
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        if(drawerLayout.isDrawerOpen(GravityCompat.START)){
+            drawerLayout.closeDrawer(GravityCompat.START)
+        } else {
+            onBackPressedDispatcher.onBackPressed()
+        }
+    }
+
 
     private fun initPointList() {
         var id = 0
@@ -178,19 +217,10 @@ class MainActivity : AppCompatActivity(){
     override fun onPause() {
         super.onPause()
         map.onPause()
-        closeDrawer(drawerLayout = findViewById(R.id.drawerLayout))
     }
 
 
-    fun openDrawer(drawerLayout: DrawerLayout){
-        drawerLayout.openDrawer(GravityCompat.START)
-    }
 
-    fun closeDrawer(drawerLayout: DrawerLayout){
-        if(drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            drawerLayout.closeDrawer(GravityCompat.START)
-        }
-    }
 
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
