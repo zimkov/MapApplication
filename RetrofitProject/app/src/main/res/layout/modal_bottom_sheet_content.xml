@@ -20,7 +20,9 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="vertical">
+
+
 
         <TextView
             android:id="@+id/createText"
@@ -34,13 +36,30 @@
             android:textColor="@color/black"
             android:textSize="25dp" />
 
-        <ImageView
+        <LinearLayout
+            android:id="@+id/rating"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:padding="10dp">
+
+        <RatingBar
+            android:id="@+id/ratingBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_launcher_foreground"
-            android:layout_marginLeft="250dp"
-            android:layout_marginTop="8dp"
-            android:id="@+id/cancelButton"/>
+            android:layout_centerInParent="true" />
+
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/ic_launcher_foreground"/>
+            <ImageView
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/ic_launcher_foreground"/>
+
+        </LinearLayout>
 
     </LinearLayout>
 

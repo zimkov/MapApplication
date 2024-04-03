@@ -147,7 +147,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         initPointList()
         pointList.forEach{
-            setMarker(it.geoPoint, it.display_name, it.address)
+            setMarker(it.geoPoint, it.display_name, it.address, it.rating)
         }
         registerForActivityResult(ActivityResultContracts.RequestPermission()) {}
         locationOverlay = MyLocationNewOverlay(GpsMyLocationProvider(this), map)
@@ -183,14 +183,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private fun initPointList() {
         var id = 0
         pointList = listOf(
-            MapObject(id++, "ТЮЗ",GeoPoint(51.531498,46.0149078), address = "ул. Киселева, 1, Ю.П"),
-            MapObject(id++, "Крытый рынок",GeoPoint(51.5318644,46.0220545), address = "Саратов, Саратовская обл., 410056"),
-            MapObject(id++, "Лицей №3 им АС Пушкина",GeoPoint(51.5295652,46.0204048), address = "ул. Советская, 46")
+            MapObject(id++, "ТЮЗ",GeoPoint(51.531498,46.0149078), 1f, address = "ул. Киселева, 1, Ю.П"),
+            MapObject(id++, "Крытый рынок",GeoPoint(51.5318644,46.0220545), 4f, address = "Саратов, Саратовская обл., 410056"),
+            MapObject(id++, "Лицей №3 им АС Пушкина",GeoPoint(51.5295652,46.0204048), 3f, address = "ул. Советская, 46")
         )
     }
 
     //Ставит маркер на введенные координаты, присваивает имя и другие данные
-    private fun setMarker(geoPoint: GeoPoint, name: String, adress: String){
+    private fun setMarker(geoPoint: GeoPoint, name: String, adress: String, rating: Float){
         var marker = Marker(map)
         marker.position = geoPoint
         marker.icon = ContextCompat.getDrawable(this, org.osmdroid.library.R.drawable.marker_default)
@@ -199,6 +199,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         //Появление карточки при нажати на объект (Обработка нажатия на маркер)
         marker.setOnMarkerClickListener { marker, mapView ->
             modalBottomSheet.name = name
+            modalBottomSheet.rating = rating
             modalBottomSheet.geoPoint = geoPoint
             modalBottomSheet.address = adress
             modalBottomSheet.show(supportFragmentManager, ModalBottomSheet.TAG)
