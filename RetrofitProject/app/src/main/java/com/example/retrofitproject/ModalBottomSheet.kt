@@ -1,10 +1,13 @@
 package com.example.retrofitproject
 
+import android.annotation.SuppressLint
+import android.content.Intent
 import android.media.Image
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.RatingBar
@@ -25,6 +28,7 @@ class ModalBottomSheet : BottomSheetDialogFragment() {
     lateinit var image: Image
 
     override fun getTheme() = R.style.AppBottomSheetDialogTheme
+    @SuppressLint("CutPasteId")
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -35,7 +39,7 @@ class ModalBottomSheet : BottomSheetDialogFragment() {
 
         val imageList = ArrayList<SlideModel>() // Create image list
 
-        imageList.add(SlideModel("https://www.sstu.ru/upload/iblock/493/1024-_1_.jpg"))
+        imageList.add(SlideModel("https://cdn2.tu-tu.ru/image/pagetree_node_data/1/a2a56dac4560eb9f3582303c4d3ff265/"))
         imageList.add(SlideModel("https://www.sstu.ru/upload/iblock/44b/foto.jpg"))
         imageList.add(SlideModel("https://www.sstu.ru/upload/iblock/522/DJI_0049.jpg"))
 
@@ -43,6 +47,11 @@ class ModalBottomSheet : BottomSheetDialogFragment() {
         imageSlider.setImageList(imageList)
 
 
+        ds.findViewById<Button>(R.id.button1).setOnClickListener {
+            val intent = Intent(requireContext(), AddInfoActivity::class.java)
+            intent.putExtra("item", name)
+            startActivity(intent)
+        }
 
         ds.findViewById<TextView>(R.id.createText).text = name
         ds.findViewById<TextView>(R.id.textView2).text = "Координаты: " + geoPoint.toString()

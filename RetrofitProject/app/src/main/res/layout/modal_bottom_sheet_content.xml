@@ -101,7 +101,26 @@
             android:textSize="16sp" />
 
     </LinearLayout>
+    <LinearLayout
+        android:id="@+id/layoutButton"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="30dp">
 
+        <Button
+            android:id="@+id/button1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Добавить информацию о доступности"
+            android:layout_marginLeft="30dp"/>
+
+
+    </LinearLayout>
     <LinearLayout
         android:id="@+id/layoutLive"
         android:orientation="horizontal"
@@ -111,6 +130,7 @@
         android:paddingRight="10dp"
         android:paddingTop="10dp"
         android:paddingBottom="30dp">
+
 
 
         <ImageView
@@ -127,5 +147,7 @@
             android:textSize="16sp"/>
 
     </LinearLayout>
+
+
 
 </LinearLayout>
