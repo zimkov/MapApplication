@@ -9,6 +9,7 @@ import android.preference.PreferenceManager
 import android.view.MenuItem
 import android.view.View
 import android.widget.FrameLayout
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -154,6 +155,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         locationOverlay.enableMyLocation()
         map.overlays.add(this.locationOverlay)
 
+
+        findViewById<ImageButton>(R.id.locationButton).setOnClickListener {
+            mapController.setCenter(locationOverlay.myLocation)
+            mapController.setZoom(20)
+            Toast.makeText(this,"Текущее местоположение", Toast.LENGTH_SHORT).show()
+        }
 
     }
 

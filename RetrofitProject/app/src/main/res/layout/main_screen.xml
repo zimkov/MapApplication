@@ -33,8 +33,19 @@
                 android:id="@+id/mapview"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                tilesource="Mapnik" />
+                tilesource="Mapnik" >
 
+
+            </org.osmdroid.views.MapView>
+            <ImageButton
+                android:id="@+id/locationButton"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_alignParentBottom="true"
+                android:src="@drawable/baseline_fmd_good_24"
+                android:layout_marginTop="580dp"
+                android:background="@drawable/circle_butto"
+                android:layout_marginLeft="320dp"/>
         </FrameLayout>
 
 
