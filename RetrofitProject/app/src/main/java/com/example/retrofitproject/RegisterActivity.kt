@@ -6,11 +6,13 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 
-class LoginActivity : AppCompatActivity() {
+class RegisterActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_login)
+        setContentView(R.layout.activity_register)
 
+
+        val name = findViewById<EditText>(R.id.name)
         val username = findViewById<EditText>(R.id.username)
         val password = findViewById<EditText>(R.id.password)
         val loginButton = findViewById<Button>(R.id.loginButton)
@@ -18,11 +20,11 @@ class LoginActivity : AppCompatActivity() {
 
         loginButton.setOnClickListener {
             finish()
-            startActivity(Intent(this, MainActivity::class.java))
         }
 
         registerButton.setOnClickListener {
-            startActivity(Intent(this, RegisterActivity::class.java))
+            finish()
         }
+
     }
 }
