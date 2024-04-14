@@ -171,7 +171,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             R.id.nav_settings -> startActivity(Intent(this, ProfileActivity::class.java))
             R.id.nav_info -> startActivity(Intent(this, InfoActivity::class.java))
             R.id.nav_share -> Toast.makeText(this,"Поделиться", Toast.LENGTH_SHORT).show()
-            R.id.nav_logout -> Toast.makeText(this,"Выход из аккаунта", Toast.LENGTH_SHORT).show()
+            R.id.nav_logout -> {
+                finish()
+                startActivity(Intent(this, LoginActivity::class.java))
+                Toast.makeText(this, "Выход из аккаунта", Toast.LENGTH_SHORT).show()
+            }
         }
         drawerLayout.closeDrawer(GravityCompat.START)
         return true
