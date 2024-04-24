@@ -1,45 +1,44 @@
 package com.example.retrofitproject
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Intent
-import android.graphics.drawable.GradientDrawable
+import android.graphics.Color
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.view.MenuItem
-import android.view.View
-import android.widget.FrameLayout
+import android.widget.Button
 import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
 import android.widget.Toast
-import android.widget.Toolbar
-import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.ActionBarDrawerToggle
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import com.example.retrofitproject.DataClasses.MapObject
 import com.example.retrofitproject.Product.ProductApi
 import com.example.retrofitproject.ui.theme.RetrofitProjectTheme
+import com.google.android.material.navigation.NavigationView
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import org.osmdroid.bonuspack.routing.OSRMRoadManager
+import org.osmdroid.bonuspack.routing.RoadManager
 import org.osmdroid.config.Configuration.*
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
+import org.osmdroid.views.overlay.Polyline
 import org.osmdroid.views.overlay.gestures.RotationGestureOverlay
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
@@ -54,11 +53,6 @@ import javax.net.ssl.SSLContext
 import javax.net.ssl.SSLSocketFactory
 import javax.net.ssl.TrustManager
 import javax.net.ssl.X509TrustManager
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.GravityCompat
-import androidx.drawerlayout.widget.DrawerLayout
-import androidx.fragment.app.FragmentManager
-import com.google.android.material.navigation.NavigationView
 
 @OptIn(ExperimentalMaterial3Api::class)
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener{
@@ -74,6 +68,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
 
+    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -162,6 +157,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             Toast.makeText(this,"Текущее местоположение", Toast.LENGTH_SHORT).show()
         }
 
+
+
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
@@ -200,6 +197,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         )
     }
 
+
+    var lengthRoad = 0
+    var durationRoad = 0
+
     //Ставит маркер на введенные координаты, присваивает имя и другие данные
     private fun setMarker(geoPoint: GeoPoint, name: String, adress: String, rating: Float){
         var marker = Marker(map)
@@ -209,16 +210,39 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER)
         //Появление карточки при нажати на объект (Обработка нажатия на маркер)
         marker.setOnMarkerClickListener { marker, mapView ->
+            buildRoad(geoPoint)
             modalBottomSheet.name = name
             modalBottomSheet.rating = rating
             modalBottomSheet.geoPoint = geoPoint
             modalBottomSheet.address = adress
+            modalBottomSheet.durationRoad = durationRoad
+            modalBottomSheet.lengthRoad = lengthRoad
             modalBottomSheet.show(supportFragmentManager, ModalBottomSheet.TAG)
+
             //Toast.makeText(this, marker.title, Toast.LENGTH_SHORT).show()
             return@setOnMarkerClickListener true
         }
         map.overlays.add(marker)
         map.invalidate()
+    }
+
+
+    fun buildRoad(endPoint: GeoPoint){
+        map.overlays.removeAll { it is Polyline }
+        CoroutineScope(Dispatchers.IO).launch{
+            val roadManager = OSRMRoadManager(this@MainActivity, System.getProperty("http.agent"))
+            roadManager.setMean(OSRMRoadManager.MEAN_BY_FOOT)
+            val wayPoints = arrayListOf<GeoPoint>(locationOverlay?.myLocation  ?:startPoint, endPoint)
+            val road = roadManager.getRoad(wayPoints)
+            val roadOverlay = RoadManager.buildRoadOverlay(road, Color.rgb(77,129,213), 20F)
+            withContext(Dispatchers.Main){
+                lengthRoad = (road.mLength * 1000).toInt()
+                durationRoad = road.mDuration.toInt()
+                map.overlays.add(0, roadOverlay)
+                map.invalidate()
+            }
+        }
+
     }
 
     override fun onResume() {

@@ -18,6 +18,8 @@ import com.denzcoskun.imageslider.models.SlideModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import org.osmdroid.util.GeoPoint
+import com.example.retrofitproject.MainActivity
+
 
 class ModalBottomSheet : BottomSheetDialogFragment() {
 
@@ -25,6 +27,8 @@ class ModalBottomSheet : BottomSheetDialogFragment() {
     lateinit var geoPoint: GeoPoint
     var address: String = ""
     var rating: Float = 0.0f
+    var durationRoad = 0
+    var lengthRoad = 0
     lateinit var image: Image
 
     override fun getTheme() = R.style.AppBottomSheetDialogTheme
@@ -54,11 +58,16 @@ class ModalBottomSheet : BottomSheetDialogFragment() {
         }
 
         ds.findViewById<TextView>(R.id.createText).text = name
-        ds.findViewById<TextView>(R.id.textView2).text = "Координаты: " + geoPoint.toString()
+        ds.findViewById<TextView>(R.id.textView2).text = "Расстояние: " + lengthRoad + "м Время в пути: " + durationRoad/60 +"мин"
         ds.findViewById<TextView>(R.id.textView1).text = "Адрес: " + address
         ds.findViewById<RatingBar>(R.id.ratingBar).rating = rating
         ds.findViewById<RatingBar>(R.id.ratingBar).stepSize = .5f
         ds.findViewById<RatingBar>(R.id.ratingBar).invalidate()
+
+
+        ds.findViewById<Button>(R.id.buttonGo).setOnClickListener {
+            this.dismiss()
+        }
 
         return ds
     }
@@ -66,5 +75,7 @@ class ModalBottomSheet : BottomSheetDialogFragment() {
     companion object {
         const val TAG = "ModalBottomSheet"
     }
+
+
 
 }
