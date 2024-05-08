@@ -26,21 +26,16 @@ namespace MapApi.Controllers
         [Route("/get/ontology")]
         public string GetOntologyObjects()
         {
-            //Create a graph to load into
             IGraph g = new Graph();
 
-            //Load the OWL file
             g.LoadFromFile("Ontology.owl");
 
             string s = "Результат запроса: ";
             
-
-            //First we need an instance of the SparqlQueryParser
             SparqlQueryParser parser = new SparqlQueryParser();
-
-            //Then we can parse a SPARQL string into a query
             SparqlQuery q = parser
-                .ParseFromString("PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> SELECT ?subject ?object WHERE { ?subject rdfs:subClassOf ?object }");
+                .ParseFromString("PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> " +
+                "SELECT ?subject ?object WHERE { ?subject rdfs:subClassOf ?object }");
             Object results = g.ExecuteQuery(q);
             if (results is SparqlResultSet)
             {
@@ -49,8 +44,6 @@ namespace MapApi.Controllers
                 foreach (SparqlResult result in rset)
                 {
                     string decodedString = HttpUtility.UrlDecode(result.ToString());
-                    //int i = decodedString.IndexOf('#');
-                   // string iri = decodedString.Substring(i);
                     Console.WriteLine(decodedString);
                     Console.WriteLine("\n");
                 }

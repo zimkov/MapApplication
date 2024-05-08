@@ -92,38 +92,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             navigationView.setCheckedItem(R.id.nav_home)
         }
 
-        val interceptor = HttpLoggingInterceptor()
-        interceptor.level = HttpLoggingInterceptor.Level.BODY
-        val okHttpClient = UnsafeOkHttpClient.unsafeOkHttpClient;
-        val client = OkHttpClient.Builder()
-            .addInterceptor(interceptor)
-            .build()
-
-        val retrofit = Retrofit.Builder()
-            .baseUrl("https://10.0.2.2:7017/").client(okHttpClient)
-            .addConverterFactory(ScalarsConverterFactory.create())
-            .addConverterFactory(GsonConverterFactory.create()).build()
-        val productApi = retrofit.create(ProductApi::class.java)
-            /*
-            CoroutineScope(Dispatchers.IO).launch {
-                val product = productApi.getUser()
-                runOnUiThread {
 
 
-                    setContent {
-                        RetrofitProjectTheme {
-                            // A surface container using the 'background' color from the theme
-                            Surface(
-                                modifier = Modifier.fillMaxSize(),
-                                color = MaterialTheme.colorScheme.background
-                            ) {
-                                Greeting(product)
-                            }
-                        }
-                    }
-                }
-            }
-            */
+
+
 
 
         getInstance().load(this, PreferenceManager.getDefaultSharedPreferences(this))
@@ -141,10 +113,39 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         map.setMultiTouchControls(true)
         map.overlays.add(rotationGestureOverlay)
 
-        initPointList()
-        pointList.forEach{
-            setMarker(it.geoPoint, it.display_name, it.address, it.rating)
+        val interceptor = HttpLoggingInterceptor()
+        interceptor.level = HttpLoggingInterceptor.Level.BODY
+        val okHttpClient = UnsafeOkHttpClient.unsafeOkHttpClient;
+        val client = OkHttpClient.Builder()
+            .addInterceptor(interceptor)
+            .build()
+
+        val retrofit = Retrofit.Builder()
+            .baseUrl("http://194.26.138.65:5000/").client(client)
+            .addConverterFactory(ScalarsConverterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create()).build()
+        val productApi = retrofit.create(ProductApi::class.java)
+
+        CoroutineScope(Dispatchers.IO).launch {
+            val socialMapObject = productApi.getSocialMapObject().get(0)
+
+            runOnUiThread {
+                pointList = listOf(
+                    MapObject(0, "Крытый рынок",GeoPoint(51.5318644,46.0220545), 4f, address = "Саратов, Саратовская обл., 410056"),
+                    MapObject(1, socialMapObject.display_name,GeoPoint(51.531498,46.0149078), 1f, socialMapObject.adress))
+
+                pointList.forEach{
+                    setMarker(it.geoPoint, it.display_name, it.address, it.rating)
+                }
+
+            }
+
         }
+
+
+        //Toast.makeText(this,pointList.get(1).display_name, Toast.LENGTH_SHORT).show()
+        initPointList()
+
         registerForActivityResult(ActivityResultContracts.RequestPermission()) {}
         locationOverlay = MyLocationNewOverlay(GpsMyLocationProvider(this), map)
         locationOverlay.enableMyLocation()
@@ -189,12 +190,15 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
     private fun initPointList() {
+
         var id = 0
+        /*
         pointList = listOf(
             MapObject(id++, "ТЮЗ",GeoPoint(51.531498,46.0149078), 1f, address = "ул. Киселева, 1, Ю.П"),
             MapObject(id++, "Крытый рынок",GeoPoint(51.5318644,46.0220545), 4f, address = "Саратов, Саратовская обл., 410056"),
             MapObject(id++, "Лицей №3 им АС Пушкина",GeoPoint(51.5295652,46.0204048), 3f, address = "ул. Советская, 46")
         )
+        */
     }
 
 
@@ -218,8 +222,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             modalBottomSheet.durationRoad = durationRoad
             modalBottomSheet.lengthRoad = lengthRoad
             modalBottomSheet.show(supportFragmentManager, ModalBottomSheet.TAG)
-
-            //Toast.makeText(this, marker.title, Toast.LENGTH_SHORT).show()
             return@setOnMarkerClickListener true
         }
         map.overlays.add(marker)
@@ -292,26 +294,20 @@ object UnsafeOkHttpClient {
                             authType: String
                         ) {
                         }
-
                         @Throws(CertificateException::class)
                         override fun checkServerTrusted(
                             chain: Array<X509Certificate>,
                             authType: String
                         ) {
                         }
-
                         override fun getAcceptedIssuers(): Array<X509Certificate> {
                             return arrayOf()
                         }
                     }
                 )
-
-            // Install the all-trusting trust manager
             val sslContext =
                 SSLContext.getInstance("SSL")
             sslContext.init(null, trustAllCerts, SecureRandom())
-
-            // Create an ssl socket factory with our all-trusting manager
             val sslSocketFactory: SSLSocketFactory = sslContext.socketFactory
             val builder = OkHttpClient.Builder()
             builder.sslSocketFactory(

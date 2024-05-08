@@ -10,8 +10,6 @@ namespace MapApi.Models
         public User()
         {
         }
-        
-
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
@@ -20,7 +18,6 @@ namespace MapApi.Models
         [Required]
         public string Name { get; set; } = null!;
 
-        
         [Column("Type")]
         [Required]
         [JsonConverter(typeof(JsonStringEnumConverter))]
@@ -33,7 +30,6 @@ namespace MapApi.Models
         [Column("ListRoutes")]
         [Required]
         public List<Route> ListRoutes { get; set; } = null!;
-
     }
 
     public enum UserStatus
