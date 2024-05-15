@@ -42,7 +42,7 @@ namespace MapApi.Controllers
             return Ok();
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id}/getById")]
         public async Task<ActionResult<User>> GetUserById(int id)
         {
             var user = await _context.Users.FindAsync(id);
@@ -52,6 +52,25 @@ namespace MapApi.Controllers
             }
             return user;
         }
+
+        [HttpGet("{email}/getByEmail")]
+        public async Task<ActionResult<User>> GetUserByEmail(string email)
+        {
+            if (_context.Users == null)
+            {
+                return Problem("Entity set 'MvcMovieContext.Movie'  is null.");
+            }
+
+            var users = from m in _context.Users
+                        select m;
+
+            if (!String.IsNullOrEmpty(email))
+            {
+                users = users.Where(s => s.Email!.Contains(email));
+            }
+            return await users.FirstOrDefaultAsync();
+        }
+
 
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)

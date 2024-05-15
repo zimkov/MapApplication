@@ -8,6 +8,7 @@ import android.preference.PreferenceManager
 import android.view.MenuItem
 import android.widget.Button
 import android.widget.ImageButton
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.ActionBarDrawerToggle
@@ -22,6 +23,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.example.retrofitproject.DataClasses.MapObject
+import com.example.retrofitproject.DataClasses.User
 import com.example.retrofitproject.Product.ProductApi
 import com.example.retrofitproject.ui.theme.RetrofitProjectTheme
 import com.google.android.material.navigation.NavigationView
@@ -60,7 +62,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private val REQUEST_PERMISSIONS_REQUEST_CODE = 1
     private lateinit var map : MapView
     private val startPoint = GeoPoint( 51.5406, 46.0086)
-    private var pointList: List<MapObject> = listOf()
+    private lateinit var pointList: ArrayList<MapObject>
     private lateinit var locationOverlay: MyLocationNewOverlay
     private val modalBottomSheet = ModalBottomSheet()
 
@@ -76,6 +78,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         setContentView(R.layout.main_screen)
         drawerLayout = findViewById(R.id.drawer_layout)
 
+
         val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
 
@@ -90,15 +93,18 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             supportFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, HomeFragment()).commit()
             navigationView.setCheckedItem(R.id.nav_home)
+
         }
 
 
-
-
-
-
-
         getInstance().load(this, PreferenceManager.getDefaultSharedPreferences(this))
+
+        val username = navigationView.getHeaderView(0).findViewById<TextView>(R.id.userName)
+        val email = navigationView.getHeaderView(0).findViewById<TextView>(R.id.email)
+        val user : User = intent.extras?.get("user") as User
+        username.text = user.name
+        email.text = user.email
+
 
         map = findViewById<MapView>(R.id.mapview)
         map.setTileSource(TileSourceFactory.MAPNIK)
@@ -127,12 +133,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val productApi = retrofit.create(ProductApi::class.java)
 
         CoroutineScope(Dispatchers.IO).launch {
-            val socialMapObject = productApi.getSocialMapObject().get(0)
-
+            val socialMapObject = productApi.getSocialMapObject()
+            pointList = ArrayList<MapObject>()
             runOnUiThread {
-                pointList = listOf(
-                    MapObject(0, "Крытый рынок",GeoPoint(51.5318644,46.0220545), 4f, address = "Саратов, Саратовская обл., 410056"),
-                    MapObject(1, socialMapObject.display_name,GeoPoint(51.531498,46.0149078), 1f, socialMapObject.adress))
+                socialMapObject.forEach {
+                    pointList.add(MapObject(it.id, it.display_name, GeoPoint(it.x, it.y), 4f, it.adress))
+                }
 
                 pointList.forEach{
                     setMarker(it.geoPoint, it.display_name, it.address, it.rating)
@@ -142,9 +148,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         }
 
-
-        //Toast.makeText(this,pointList.get(1).display_name, Toast.LENGTH_SHORT).show()
-        initPointList()
 
         registerForActivityResult(ActivityResultContracts.RequestPermission()) {}
         locationOverlay = MyLocationNewOverlay(GpsMyLocationProvider(this), map)
@@ -161,7 +164,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
     }
-
+    //Боковое меню
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when(item.itemId){
             R.id.nav_home -> supportFragmentManager.beginTransaction()
@@ -189,17 +192,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
 
-    private fun initPointList() {
 
-        var id = 0
-        /*
-        pointList = listOf(
-            MapObject(id++, "ТЮЗ",GeoPoint(51.531498,46.0149078), 1f, address = "ул. Киселева, 1, Ю.П"),
-            MapObject(id++, "Крытый рынок",GeoPoint(51.5318644,46.0220545), 4f, address = "Саратов, Саратовская обл., 410056"),
-            MapObject(id++, "Лицей №3 им АС Пушкина",GeoPoint(51.5295652,46.0204048), 3f, address = "ул. Советская, 46")
-        )
-        */
-    }
 
 
     var lengthRoad = 0

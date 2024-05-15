@@ -25,12 +25,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Имя Фамилия"
+            android:id="@+id/userName"
             android:textStyle="bold"
             android:textColor="@color/white"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="accoint@gmail.com"
+            android:id="@+id/email"
             android:textColor="@color/white"
             android:textSize="14sp"
             android:layout_marginBottom="16dp"/>

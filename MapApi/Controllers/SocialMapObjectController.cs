@@ -87,6 +87,7 @@ namespace MapApi.Controllers
             }
             return socialMapObject;
         }
+        
 
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)
