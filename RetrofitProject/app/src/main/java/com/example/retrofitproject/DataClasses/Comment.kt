@@ -1,9 +1,11 @@
 package com.example.retrofitproject.DataClasses
 
 data class Comment(
-    val Id: Int,
-    val Text: String,
-    val Rate: Int,
-    val User: User,
-    val MapObject: SocialMapObject
+    val id: Int,
+    val text: String?,
+    val rate: Int,
+    val userId: Int,
+    val user: User,
+    val mapObjectId: Int,
+    val mapObject: SocialMapObject?
 )

@@ -22,6 +22,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import com.example.retrofitproject.DataClasses.Comment
 import com.example.retrofitproject.DataClasses.MapObject
 import com.example.retrofitproject.DataClasses.User
 import com.example.retrofitproject.Product.ProductApi
@@ -141,7 +142,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 }
 
                 pointList.forEach{
-                    setMarker(it.geoPoint, it.display_name, it.address, it.rating)
+                    setMarker(it.id, it.geoPoint, it.display_name, it.address, it.rating)
                 }
 
             }
@@ -199,7 +200,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     var durationRoad = 0
 
     //Ставит маркер на введенные координаты, присваивает имя и другие данные
-    private fun setMarker(geoPoint: GeoPoint, name: String, adress: String, rating: Float){
+    private fun setMarker(id: Int, geoPoint: GeoPoint, name: String, adress: String, rating: Float){
         var marker = Marker(map)
         marker.position = geoPoint
         marker.icon = ContextCompat.getDrawable(this, org.osmdroid.library.R.drawable.marker_default)
@@ -208,6 +209,39 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         //Появление карточки при нажати на объект (Обработка нажатия на маркер)
         marker.setOnMarkerClickListener { marker, mapView ->
             buildRoad(geoPoint)
+
+            lateinit var commentList : ArrayList<Comment>
+            val interceptor = HttpLoggingInterceptor()
+            interceptor.level = HttpLoggingInterceptor.Level.BODY
+            val okHttpClient = UnsafeOkHttpClient.unsafeOkHttpClient;
+            val client = OkHttpClient.Builder()
+                .addInterceptor(interceptor)
+                .build()
+
+            val retrofit = Retrofit.Builder()
+                .baseUrl("http://194.26.138.65:5000/").client(client)
+                .addConverterFactory(ScalarsConverterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create()).build()
+            val productApi = retrofit.create(ProductApi::class.java)
+
+            CoroutineScope(Dispatchers.IO).launch {
+                val comments = productApi.getComments(id)
+                commentList = ArrayList()
+                runOnUiThread {
+                    //Toast.makeText(this@MainActivity, comments[0].Text+"cdf", Toast.LENGTH_SHORT).show()
+                    comments.forEach {
+                        commentList.add(Comment(it.id, it.text, it.rate, it.userId, it.user, it.mapObjectId, it.mapObject))
+
+                    }
+                    modalBottomSheet.commentList = commentList
+
+                }
+
+            }
+
+
+
+            modalBottomSheet.mapObjectId = id
             modalBottomSheet.name = name
             modalBottomSheet.rating = rating
             modalBottomSheet.geoPoint = geoPoint

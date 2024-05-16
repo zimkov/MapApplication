@@ -8,5 +8,6 @@ data class User(
     val name: String,
     val type: String,
     val email: String,
-    val password: String
+    val password: String,
+    val listRoutes: List<String>?
 ) : Serializable

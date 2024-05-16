@@ -15,8 +15,14 @@ interface ProductApi {
     @GET("api/SocialMapObject")
     suspend fun getSocialMapObject(): List<SocialMapObject>
 
-    @GET("api/comment")
-    suspend fun getComments(): List<Comment>
+    @GET("api/comment/{mapObjectId}")
+    suspend fun getComments(@Path("mapObjectId") mapObjectId: Int): List<Comment>
+
+    @FormUrlEncoded
+    @POST("api/comment")
+    suspend fun addComment(@Field("text") text: String,
+                           @Field("email") email: String,
+                           @Field("mapObjectId") mapObjectId: Int)
 
     @GET("api/users/{email}")
     suspend fun getUserByEmail(@Path("email") email: String): User

@@ -6,10 +6,10 @@
     android:layout_height="match_parent"
     android:background="@drawable/dialogbg">
 
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
+        android:layout_height="match_parent"
+        android:id="@+id/nsView">
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -161,56 +161,27 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginLeft="10dp"
-            android:text="Написать комментарий"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/layoutLive"
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:paddingTop="10dp"
-        android:paddingBottom="30dp">
-
-
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_launcher_foreground"/>
-
-        <LinearLayout
-            android:id="@+id/layoutComment"
-            android:orientation="vertical"
+            android:id="@+id/commentField"
+            android:hint="Написать комментарий"/>
+        <Button
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-        <TextView
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Имя пользователя"
-            android:textColor="@color/black"
-            android:layout_marginLeft="10dp"
-            android:textSize="16sp"/>
-            <RatingBar
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                style="?android:attr/ratingBarStyleSmall"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Текст комментария"
-                android:textColor="@color/black"
-                android:layout_marginLeft="10dp"
-                android:textSize="16sp"/>
-
-        </LinearLayout>
-
+            android:id="@+id/sendComment"
+            android:text="Отправить"/>
     </LinearLayout>
+            <androidx.recyclerview.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/rcView"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+            </androidx.recyclerview.widget.RecyclerView>
+
+
+
 
         </LinearLayout>
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
+
+
 </LinearLayout>
