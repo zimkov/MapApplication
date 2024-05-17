@@ -139,11 +139,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             pointList = ArrayList<MapObject>()
             runOnUiThread {
                 socialMapObject.forEach {
-                    pointList.add(MapObject(it.id, it.display_name, GeoPoint(it.x, it.y), 4f, it.adress))
+                    pointList.add(MapObject(it.id, it.display_name, GeoPoint(it.x, it.y), 4f, it.adress, "Просто", it.availability))
                 }
 
                 pointList.forEach{
-                    setMarker(it.id, it.geoPoint, it.display_name, it.address, it.rating)
+                    setMarker(it.id, it.geoPoint, it.display_name, it.address, it.rating, it.availability)
                 }
 
             }
@@ -201,7 +201,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     var durationRoad = 0
 
     //Ставит маркер на введенные координаты, присваивает имя и другие данные
-    private fun setMarker(id: Int, geoPoint: GeoPoint, name: String, adress: String, rating: Float){
+    private fun setMarker(id: Int, geoPoint: GeoPoint, name: String, adress: String, rating: Float, availability: String){
         var marker = Marker(map)
         marker.position = geoPoint
         marker.icon = ContextCompat.getDrawable(this, org.osmdroid.library.R.drawable.marker_default)
@@ -244,6 +244,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             modalBottomSheet.mapObjectId = id
             modalBottomSheet.name = name
             modalBottomSheet.rating = rating
+            modalBottomSheet.availability = availability
             modalBottomSheet.geoPoint = geoPoint
             modalBottomSheet.address = adress
             modalBottomSheet.durationRoad = durationRoad

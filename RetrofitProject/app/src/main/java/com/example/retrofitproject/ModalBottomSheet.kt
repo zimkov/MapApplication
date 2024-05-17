@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.RatingBar
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -40,6 +41,7 @@ class ModalBottomSheet : BottomSheetDialogFragment() {
     lateinit var geoPoint: GeoPoint
     var address: String = ""
     var rating: Float = 0.0f
+    var availability: String = "Нет_информации_о_доступности"
     var durationRoad = 0
     var lengthRoad = 0
     lateinit var image: Image
@@ -102,11 +104,21 @@ class ModalBottomSheet : BottomSheetDialogFragment() {
         }
 
 
+        val imagesLegs = arrayOf(R.drawable.gray_icon, R.drawable.green_leg, R.drawable.orange_leg, R.drawable.red_leg)
 
         ds.findViewById<TextView>(R.id.createText).text = name
         ds.findViewById<TextView>(R.id.textView2).text = "Расстояние: " + lengthRoad + "м Время в пути: " + durationRoad/60 +"мин"
         ds.findViewById<TextView>(R.id.textView1).text = "Адрес: " + address
         ds.findViewById<RatingBar>(R.id.ratingBar).rating = rating
+        when (availability) {
+            "Доступен" -> ds.findViewById<ImageView>(R.id.leg).setImageResource(imagesLegs[1])
+            "Доступен_с_ограничениями" -> ds.findViewById<ImageView>(R.id.leg).setImageResource(imagesLegs[2])
+            "Недоступен" -> ds.findViewById<ImageView>(R.id.leg).setImageResource(imagesLegs[3])
+            else -> { // Note the block
+                ds.findViewById<ImageView>(R.id.leg).setImageResource(imagesLegs[0])
+            }
+        }
+
         ds.findViewById<RatingBar>(R.id.ratingBar).stepSize = .5f
         ds.findViewById<RatingBar>(R.id.ratingBar).invalidate()
 

@@ -57,6 +57,7 @@
         <ImageView
             android:layout_width="30dp"
             android:layout_height="50dp"
+            android:id="@+id/leg"
             android:src="@drawable/green_leg"/>
             <ImageView
                 android:layout_width="30dp"
