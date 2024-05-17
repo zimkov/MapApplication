@@ -67,6 +67,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private lateinit var locationOverlay: MyLocationNewOverlay
     private val modalBottomSheet = ModalBottomSheet()
 
+    lateinit var user : User
     private lateinit var  drawerLayout: DrawerLayout
 
 
@@ -102,7 +103,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         val username = navigationView.getHeaderView(0).findViewById<TextView>(R.id.userName)
         val email = navigationView.getHeaderView(0).findViewById<TextView>(R.id.email)
-        val user : User = intent.extras?.get("user") as User
+        user = intent.extras?.get("user") as User
         username.text = user.name
         email.text = user.email
 
@@ -239,8 +240,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
             }
 
-
-
+            modalBottomSheet.user = user
             modalBottomSheet.mapObjectId = id
             modalBottomSheet.name = name
             modalBottomSheet.rating = rating

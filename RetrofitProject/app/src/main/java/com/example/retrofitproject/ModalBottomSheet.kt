@@ -9,22 +9,16 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
-import android.widget.FrameLayout
-import android.widget.ImageView
 import android.widget.RatingBar
 import android.widget.TextView
-import android.widget.Toast
-import androidx.coordinatorlayout.widget.CoordinatorLayout
-import androidx.core.widget.NestedScrollView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.denzcoskun.imageslider.ImageSlider
 import com.denzcoskun.imageslider.models.SlideModel
 import com.example.retrofitproject.DataClasses.Comment
-import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.example.retrofitproject.DataClasses.User
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import org.osmdroid.util.GeoPoint
-import com.example.retrofitproject.MainActivity
 import com.example.retrofitproject.Product.ProductApi
 import com.example.retrofitproject.adapter.CommentAdapter
 import kotlinx.coroutines.CoroutineScope
@@ -39,6 +33,7 @@ import retrofit2.converter.scalars.ScalarsConverterFactory
 
 class ModalBottomSheet : BottomSheetDialogFragment() {
 
+    lateinit var user: User
     var mapObjectId: Int = 0
     var commentList: List<Comment> = ArrayList<Comment>()
     var name: String = ""
@@ -100,7 +95,9 @@ class ModalBottomSheet : BottomSheetDialogFragment() {
         ds.findViewById<Button>(R.id.sendComment).setOnClickListener {
 
             CoroutineScope(Dispatchers.IO).launch {
-                productApi.addComment("fdfsdf", "newMail", mapObjectId)
+
+                productApi.addComment(commentText.text.toString(), user.email ,mapObjectId)
+                commentText.text.clear()
             }
         }
 
