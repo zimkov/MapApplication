@@ -8,11 +8,13 @@ import android.preference.PreferenceManager
 import android.view.MenuItem
 import android.widget.Button
 import android.widget.ImageButton
+import android.widget.SearchView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView.OnQueryTextListener
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,10 +24,15 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.retrofitproject.DataClasses.Comment
 import com.example.retrofitproject.DataClasses.MapObject
+import com.example.retrofitproject.DataClasses.SocialMapObject
 import com.example.retrofitproject.DataClasses.User
 import com.example.retrofitproject.Product.ProductApi
+import com.example.retrofitproject.adapter.CommentAdapter
+import com.example.retrofitproject.adapter.MapObjectAdapter
 import com.example.retrofitproject.ui.theme.RetrofitProjectTheme
 import com.google.android.material.navigation.NavigationView
 import kotlinx.coroutines.CoroutineScope
@@ -68,6 +75,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private val modalBottomSheet = ModalBottomSheet()
 
     lateinit var user : User
+    private lateinit var adapter: MapObjectAdapter
     private lateinit var  drawerLayout: DrawerLayout
 
 
@@ -149,6 +157,40 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
 
         }
+
+        //var mapObjectList = ArrayList<MapObject>()
+
+        //поиск
+        adapter = MapObjectAdapter()
+        findViewById<RecyclerView>(R.id.searchList).layoutManager = LinearLayoutManager(this)
+        findViewById<RecyclerView>(R.id.searchList).adapter = adapter
+
+        val searchView = findViewById<SearchView>(R.id.searchView)
+        searchView.setOnQueryTextListener(object: SearchView.OnQueryTextListener{
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                CoroutineScope(Dispatchers.IO).launch {
+                    var list: List<SocialMapObject>? = emptyList()
+                    if(newText != null && newText != ""){
+                        list = productApi.searchSocialMapObject(newText)
+                    }else{
+                        list = emptyList()
+                    }
+
+                    runOnUiThread {
+                        adapter.submitList(list)
+                    }
+
+                }
+                return true
+            }
+        })
+
+
+
 
 
         registerForActivityResult(ActivityResultContracts.RequestPermission()) {}

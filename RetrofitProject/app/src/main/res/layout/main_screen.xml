@@ -28,12 +28,33 @@
             android:layout_height="match_parent"
             android:id="@+id/fragment_container">
 
+
+
             <org.osmdroid.views.MapView
                 android:id="@+id/mapview"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 tilesource="Mapnik" >
             </org.osmdroid.views.MapView>
+
+            <SearchView
+                android:layout_width="match_parent"
+                android:layout_height="140px"
+                android:layout_margin="30px"
+                android:id="@+id/searchView"
+                android:clickable="true"
+                app:queryHint="Поиск"
+                android:background="@drawable/bg_white_rounded"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/searchList"
+                android:layout_marginTop="180px"
+                android:layout_marginLeft="30px"
+                android:layout_marginRight="30px">
+
+            </androidx.recyclerview.widget.RecyclerView>
 
             <ImageButton
                 android:id="@+id/locationButton"

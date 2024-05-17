@@ -14,6 +14,9 @@ interface ProductApi {
     @GET("api/SocialMapObject")
     suspend fun getSocialMapObject(): List<SocialMapObject>
 
+    @GET("api/SocialMapObject/SearchBy/")
+    suspend fun searchSocialMapObject(@Query("search") search: String): List<SocialMapObject>
+
     @GET("api/comment/{mapObjectId}")
     suspend fun getComments(@Path("mapObjectId") mapObjectId: Int): List<Comment>
 
