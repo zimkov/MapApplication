@@ -1,8 +1,13 @@
 package com.example.retrofitproject
 
+import android.Manifest
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Color
+import android.location.Location
+import android.location.LocationManager
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.view.MenuItem
@@ -34,6 +39,9 @@ import com.example.retrofitproject.Product.ProductApi
 import com.example.retrofitproject.adapter.CommentAdapter
 import com.example.retrofitproject.adapter.MapObjectAdapter
 import com.example.retrofitproject.ui.theme.RetrofitProjectTheme
+import com.google.android.gms.common.api.GoogleApi.Settings
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.google.android.material.navigation.NavigationView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -70,6 +78,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private val REQUEST_PERMISSIONS_REQUEST_CODE = 1
     private lateinit var map : MapView
     private val startPoint = GeoPoint( 51.5406, 46.0086)
+    private lateinit var gpsPoint: GeoPoint
     private lateinit var pointList: ArrayList<MapObject>
     private lateinit var locationOverlay: MyLocationNewOverlay
     private val modalBottomSheet = ModalBottomSheet()
@@ -77,6 +86,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     lateinit var user : User
     private lateinit var adapter: MapObjectAdapter
     private lateinit var  drawerLayout: DrawerLayout
+
+    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
 
 
@@ -88,6 +99,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         setContentView(R.layout.main_screen)
         drawerLayout = findViewById(R.id.drawer_layout)
 
+
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
+        getCurrentLocation()
 
         val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
@@ -200,7 +214,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
         findViewById<ImageButton>(R.id.locationButton).setOnClickListener {
-            mapController.setCenter(locationOverlay.myLocation)
+
+            mapController.setCenter(gpsPoint)
             mapController.setZoom(20)
             Toast.makeText(this,"Текущее местоположение", Toast.LENGTH_SHORT).show()
         }
@@ -208,6 +223,104 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
     }
+
+    //получение местоположения
+    private fun getCurrentLocation()
+    {
+        if(checkPermissions())
+        {
+            if(isLocationEnabled())
+            {
+                //получаем gps
+                if (ActivityCompat.checkSelfPermission(
+                        this,
+                        Manifest.permission.ACCESS_FINE_LOCATION
+                    ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                        this,
+                        Manifest.permission.ACCESS_COARSE_LOCATION
+                    ) != PackageManager.PERMISSION_GRANTED
+                ) {
+                    requestPermissions()
+                    return
+                }
+                fusedLocationProviderClient.lastLocation.addOnCompleteListener(this){
+                    task->
+                    val location: Location?=task.result
+                    if (location == null)
+                    {
+                        Toast.makeText(this,"Null Recieved",Toast.LENGTH_SHORT).show()
+                    }
+                    else{
+                        Toast.makeText(this,"Get Success",Toast.LENGTH_SHORT).show()
+                        gpsPoint = GeoPoint(location.latitude, location.longitude)
+                    }
+                }
+            }else{
+                //setting open
+                Toast.makeText(this,"Включите геолокацию",Toast.LENGTH_SHORT).show()
+                val intent=Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+                startActivity(intent)
+            }
+        }else{
+            //request permission here
+            requestPermissions()
+        }
+    }
+
+    //проверка всключен ли gps
+    private fun isLocationEnabled():Boolean{
+        val locationManager:LocationManager=getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(
+            LocationManager.NETWORK_PROVIDER
+        )
+    }
+
+    //просьба включить gps
+    private fun requestPermissions() {
+        ActivityCompat.requestPermissions(
+            this, arrayOf(android.Manifest.permission.ACCESS_COARSE_LOCATION,
+                android.Manifest.permission.ACCESS_FINE_LOCATION),
+            PERMISSION_REQUEST_ACCESS_LOCATION
+        )
+    }
+
+
+    companion object{
+        private const val PERMISSION_REQUEST_ACCESS_LOCATION=100
+    }
+
+    //проверка на включенный gps
+    private fun checkPermissions(): Boolean
+    {
+        if(ActivityCompat.checkSelfPermission(this,
+            android.Manifest.permission.ACCESS_COARSE_LOCATION)
+            == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this,
+                android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
+        {
+            return true
+        }
+        return false
+    }
+
+    fun onRequestPermissionsResult2(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ){
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if(requestCode== PERMISSION_REQUEST_ACCESS_LOCATION)
+        {
+            if (grantResults.isNotEmpty() && grantResults[0]==PackageManager.PERMISSION_GRANTED)
+            {
+                Toast.makeText(applicationContext,"Разрешено", Toast.LENGTH_SHORT).show()
+                getCurrentLocation()
+            }
+            else{
+                Toast.makeText(applicationContext,"Отказано", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
     //Боковое меню
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when(item.itemId){
@@ -351,6 +464,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
 
+
+
+
+
+
 object UnsafeOkHttpClient {
     val unsafeOkHttpClient: OkHttpClient
         get() = try {
@@ -404,4 +522,6 @@ fun GreetingPreview() {
     RetrofitProjectTheme {
         Greeting("Android")
     }
+
+
 }

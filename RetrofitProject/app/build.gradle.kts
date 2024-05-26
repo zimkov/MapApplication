@@ -60,6 +60,8 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:4.7.2")
 
 
+    implementation("com.google.android.gms:play-services-location:21.2.0")
+
     implementation("com.github.denzcoskun:ImageSlideshow:0.1.2")
 
     implementation("androidx.appcompat:appcompat:1.3.1")

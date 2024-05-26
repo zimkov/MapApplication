@@ -60,7 +60,7 @@ class ModalBottomSheet : BottomSheetDialogFragment() {
 
         val imageList = ArrayList<SlideModel>() // Create image list
 
-        imageList.add(SlideModel("https://cdn2.tu-tu.ru/image/pagetree_node_data/1/a2a56dac4560eb9f3582303c4d3ff265/"))
+        imageList.add(SlideModel("https://www.4vsar.ru/i/news/xxl/172210.jpg"))
         imageList.add(SlideModel("https://www.sstu.ru/upload/iblock/44b/foto.jpg"))
         imageList.add(SlideModel("https://www.sstu.ru/upload/iblock/522/DJI_0049.jpg"))
 
