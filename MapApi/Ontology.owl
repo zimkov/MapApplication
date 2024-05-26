@@ -4637,8 +4637,8 @@
         <rdf:type rdf:resource="http://www.semanticweb.org/алексей/ontologies/2023/8/untitled-ontology-44#Здание"/>
         <untitled-ontology-44:имеет rdf:resource="http://www.semanticweb.org/алексей/ontologies/2023/8/untitled-ontology-44#система_визуального_информирования"/>
         <untitled-ontology-44:является rdf:resource="http://www.semanticweb.org/алексей/ontologies/2023/8/untitled-ontology-44#учреждение_культурно-зрелищного_назначения"/>
-        <untitled-ontology-44:X rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">12</untitled-ontology-44:X>
-        <untitled-ontology-44:Y rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">15</untitled-ontology-44:Y>
+        <untitled-ontology-44:X rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">51.5342196</untitled-ontology-44:X>
+        <untitled-ontology-44:Y rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">46.0228962</untitled-ontology-44:Y>
         <untitled-ontology-44:категория_Г rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</untitled-ontology-44:категория_Г>
     </owl:NamedIndividual>
     
