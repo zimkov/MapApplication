@@ -24,10 +24,9 @@ namespace MapApi.Controllers
         }
         [HttpGet]
         [Route("/get/ontology")]
-        public List<SocialMapObject> GetOntologyObjects()
+        public async Task<ActionResult<IEnumerable<SocialMapObject>>> GetOntologyObjects()
         {
             IGraph g = new Graph();
-
             g.LoadFromFile("Ontology.owl");
 
             string s = "Результат запроса: \n";
@@ -66,14 +65,40 @@ namespace MapApi.Controllers
                         Type = words[1],
                         Availability = availabString
                     };
-                    mapObjects.Add(socialMapObject);
-                    Console.WriteLine(string.Join(" ", words));
-                    s += string.Join(" ", words) + "\n";
-                    Console.WriteLine("\n");
-                }
-            }
+                    var existingEntity = _context.SocialMapObject.AsNoTracking().FirstOrDefault<SocialMapObject>(e => e.Display_name == socialMapObject.Display_name);
+                    _context.SaveChanges();
+                    if (existingEntity != null)
+                    {
+                        
+                        socialMapObject.Id = existingEntity.Id;
+                        
+                        //_context.Entry(socialMapObject).State = EntityState.Modified;
+                        _context.SocialMapObject.Update(socialMapObject);
+                        _context.SaveChanges();
+                        _context.Entry(socialMapObject).State = EntityState.Detached;
 
-            return mapObjects;
+
+                    }
+                    else
+                    {
+                        _context.SocialMapObject.Add(socialMapObject);
+                        _context.SaveChanges();
+                    }
+
+
+                    await _context.SaveChangesAsync();
+
+                    mapObjects.Add(socialMapObject);
+                    
+                    //Console.WriteLine(string.Join(" ", words));
+                    //s += string.Join(" ", words) + "\n";
+                    //Console.WriteLine("\n");
+                }
+                
+                
+            }
+            
+            return await _context.SocialMapObject.ToListAsync();
         }
         [HttpGet]
         public async Task<ActionResult<IEnumerable<SocialMapObject>>> GetSocialMapObject()
@@ -129,23 +154,23 @@ namespace MapApi.Controllers
             return NoContent();
         }
 
-        [HttpPut("{id}")]
-        public async Task<ActionResult> Put(int id, SocialMapObject socialMapObject)
+        [HttpPut("{name}")]
+        public async Task<ActionResult> Put(string name, SocialMapObject socialMapObject)
         {
-            if (id != socialMapObject.Id)
+            if (name != socialMapObject.Display_name)
             {
                 return BadRequest();
             }
 
-            _context.Entry(socialMapObject).State = EntityState.Modified;
-
+            //_context.Entry(socialMapObject).State = EntityState.Modified;
+            _context.SocialMapObject.Update(socialMapObject);
             try
             {
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!SocialMapObjectExists(id))
+                if (!SocialMapObjectExists2(name))
                 {
                     return NotFound();
                 }
@@ -161,6 +186,11 @@ namespace MapApi.Controllers
         private bool SocialMapObjectExists(int id)
         {
             return (_context.SocialMapObject?.Any(e => e.Id == id)).GetValueOrDefault();
+        }
+
+        private bool SocialMapObjectExists2(string name)
+        {
+            return (_context.SocialMapObject?.Any(e => e.Display_name.Equals(name))).GetValueOrDefault();
         }
     }
 }
