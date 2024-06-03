@@ -22,8 +22,9 @@ namespace MapApi.Controllers
             {
                 return NotFound();
             }
-            return await _context.Comment.ToListAsync();
+            return _context.Comment.Include(c => c.User).Include(c => c.MapObject).ToList();
         }
+
 
         [HttpGet("{mapObjectId}")]
         public async Task<ActionResult<IEnumerable<Comment>>> GetCommentByMapObject(int mapObjectId)
@@ -35,13 +36,13 @@ namespace MapApi.Controllers
 
             var mapObject = await _context.SocialMapObject.FindAsync(mapObjectId);
 
-
+            
 
             var comments = from m in _context.Comment
-                           select m;
+                        select m;
 
-            comments = comments.Where(s => s.MapObject.Equals(mapObject));
-
+            comments = comments.Include(c => c.User).Where(s => s.MapObject.Equals(mapObject));
+            
             return await comments.ToListAsync();
         }
 
@@ -49,7 +50,7 @@ namespace MapApi.Controllers
         [HttpPost]
         public async Task<IActionResult> AddComment(string text, string email, int mapObjectId)
         {
-            if (_context.Users == null)
+             if (_context.Users == null)
             {
                 return Problem("Entity set 'MvcMovieContext.Movie'  is null.");
             }
@@ -66,8 +67,9 @@ namespace MapApi.Controllers
             var Comment = new Comment
             {
                 Text = text,
-                MapObject = await _context.SocialMapObject.FindAsync(mapObjectId),
-                User = await users.FirstOrDefaultAsync()
+                Rate = 4,
+                User = await users.FirstOrDefaultAsync(),
+                MapObject = await _context.SocialMapObject.FindAsync(mapObjectId)
             };
             await _context.Comment.AddAsync(Comment);
             await _context.SaveChangesAsync();

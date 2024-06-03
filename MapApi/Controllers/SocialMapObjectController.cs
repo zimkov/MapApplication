@@ -27,7 +27,8 @@ namespace MapApi.Controllers
         public async Task<ActionResult<IEnumerable<SocialMapObject>>> GetOntologyObjects()
         {
             IGraph g = new Graph();
-            g.LoadFromFile("Ontology.owl");
+
+            g.LoadFromFile("/root/Application/MapApi/Ontology.owl");
 
             string s = "Результат запроса: \n";
             List<SocialMapObject> mapObjects = new List<SocialMapObject>();
@@ -47,23 +48,23 @@ namespace MapApi.Controllers
                     string[] separatingStrings = { "?object = http://www.semanticweb.org/safon/ontologies/2023/11/untitled-ontology-24#", "?object = http://www.semanticweb.org/алексей/ontologies/2023/8/untitled-ontology-44#", " , ?x = ", "^^http://www.w3.org/2001/XMLSchema#decimal , ?y = ", "^^http://www.w3.org/2001/XMLSchema#decimal", " , ?type = http://www.semanticweb.org/алексей/ontologies/2023/8/untitled-ontology-44#", " , ?propertyValue = ", "^^http://www.w3.org/2001/XMLSchema#boolean" };
 
                     string text = decodedString;
-                    var availabString = "";
+                    var availabString = 0;
                     string[] words = text.Split(separatingStrings, System.StringSplitOptions.RemoveEmptyEntries);
                     if (words.Length <= 4)
                     {
-                        availabString = "нет_информации_о_доступности";
+                        availabString = 0;
                     }
                     else
                     {
-                        availabString = "Доступен";
+                        availabString = 1;
                     }
                     var socialMapObject = new SocialMapObject
                     {
-                        Display_name = words[0].ToString(),
+                        Display_name = words[0].Replace("_", " ").ToString(),
                         X = double.Parse(words[2], System.Globalization.CultureInfo.InvariantCulture),
                         Y = double.Parse(words[3], System.Globalization.CultureInfo.InvariantCulture),
-                        Type = words[1],
-                        Availability = availabString
+                        Type = words[1].Replace("_", " "),
+                        Availability = (AvailabilityEnum)availabString
                     };
                     var existingEntity = _context.SocialMapObject.AsNoTracking().FirstOrDefault<SocialMapObject>(e => e.Display_name == socialMapObject.Display_name);
                     _context.SaveChanges();
@@ -111,14 +112,15 @@ namespace MapApi.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddSocialMapObject(int x, int y, string display_name, int rating)
+        public async Task<IActionResult> AddSocialMapObject(double x, double y, string display_name, int rating, int availability)
         {
             var socialMapObject = new SocialMapObject
             {
                 X = x,
                 Y = y,
                 Display_name = display_name,
-                Rating = rating
+                Rating = rating,
+                Availability = (AvailabilityEnum)availability
             };
             await _context.SocialMapObject.AddAsync(socialMapObject);
             await _context.SaveChangesAsync();
@@ -126,7 +128,7 @@ namespace MapApi.Controllers
             return Ok();
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("GetById/{id}")]
         public async Task<ActionResult<SocialMapObject>> GetSocialMapObjectById(int id)
         {
             var socialMapObject = await _context.SocialMapObject.FindAsync(id);
@@ -136,9 +138,14 @@ namespace MapApi.Controllers
             }
             return socialMapObject;
         }
-        
 
-        [HttpDelete("{id}")]
+        [HttpGet("SearchBy/")]
+        public async Task<ActionResult<IEnumerable<SocialMapObject>>> SearchBy(string search)
+        {
+            return await _context.SocialMapObject.Where(x => x.Display_name.Contains(search) || x.Adress.Contains(search) || search == null).ToListAsync();
+        }
+
+        [HttpDelete("DeleteById/{id}")]
         public async Task<ActionResult> Delete(int id)
         {
             var socialMapObject = await _context.SocialMapObject.FindAsync(id);
@@ -154,23 +161,23 @@ namespace MapApi.Controllers
             return NoContent();
         }
 
-        [HttpPut("{name}")]
-        public async Task<ActionResult> Put(string name, SocialMapObject socialMapObject)
+        [HttpPut("PutById/{id}")]
+        public async Task<ActionResult> Put(int id, SocialMapObject socialMapObject)
         {
-            if (name != socialMapObject.Display_name)
+            if (id != socialMapObject.Id)
             {
                 return BadRequest();
             }
 
-            //_context.Entry(socialMapObject).State = EntityState.Modified;
-            _context.SocialMapObject.Update(socialMapObject);
+            _context.Entry(socialMapObject).State = EntityState.Modified;
+
             try
             {
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!SocialMapObjectExists2(name))
+                if (!SocialMapObjectExists(id))
                 {
                     return NotFound();
                 }
@@ -186,11 +193,6 @@ namespace MapApi.Controllers
         private bool SocialMapObjectExists(int id)
         {
             return (_context.SocialMapObject?.Any(e => e.Id == id)).GetValueOrDefault();
-        }
-
-        private bool SocialMapObjectExists2(string name)
-        {
-            return (_context.SocialMapObject?.Any(e => e.Display_name.Equals(name))).GetValueOrDefault();
         }
     }
 }

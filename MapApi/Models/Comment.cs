@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace MapApi.Models
 {
@@ -10,19 +11,19 @@ namespace MapApi.Models
         public int Id { get; set; }
 
         [Column("Text")]
-        [Required]
-        public string Text { get; set; } = null!;
+        public string? Text { get; set; } = null!;
 
         [Column("Rate")]
-        [Required]
         public int Rate { get; set; }
 
+        public int UserId { get; set; }
+
         [Column("User")]
-        [Required]
-        public User User { get; set; } = null!;
+        public User? User { get; set; } = null!;
+
+        public int MapObjectId { get; set; }
 
         [Column("MapObject")]
-        [Required]
-        public MapObject MapObject { get; set; } = null!;
+        public MapObject? MapObject { get; set; } = null!;
     }
 }

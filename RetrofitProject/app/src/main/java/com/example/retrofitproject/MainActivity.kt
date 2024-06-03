@@ -5,7 +5,12 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.location.Location
 import android.location.LocationManager
 import android.os.Bundle
@@ -27,6 +32,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
+import androidx.core.graphics.drawable.toBitmap
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -161,11 +168,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             pointList = ArrayList<MapObject>()
             runOnUiThread {
                 socialMapObject.forEach {
-                    pointList.add(MapObject(it.id, it.display_name, GeoPoint(it.x, it.y), 4f, it.adress, "Просто", it.availability))
+                    pointList.add(MapObject(it.id, it.display_name, GeoPoint(it.x, it.y), 4f, it.adress, it.type, it.availability))
                 }
 
                 pointList.forEach{
-                    setMarker(it.id, it.geoPoint, it.display_name, it.address, it.rating, it.availability)
+                    setMarker(it.id, it.geoPoint, it.display_name, it.address, it.rating, it.availability, it.type)
                 }
 
             }
@@ -356,12 +363,29 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     var durationRoad = 0
 
     //Ставит маркер на введенные координаты, присваивает имя и другие данные
-    private fun setMarker(id: Int, geoPoint: GeoPoint, name: String, adress: String, rating: Float, availability: String){
+    private fun setMarker(id: Int, geoPoint: GeoPoint, name: String, adress: String, rating: Float, availability: String, type: String){
         var marker = Marker(map)
         marker.position = geoPoint
-        marker.icon = ContextCompat.getDrawable(this, org.osmdroid.library.R.drawable.marker_default)
+        marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+        //marker.icon = toBitmap(ContextCompat.getDrawable(this, R.drawable.map_marker_school))
+        when (type) {
+            "учреждение образования" -> marker.icon = toBitmap(ContextCompat.getDrawable(this, R.drawable.map_marker_school))
+            "учреждение торгового назначения" -> marker.icon = toBitmap(ContextCompat.getDrawable(this, R.drawable.map_marker_store))
+            "учреждение медицинского назначения" -> marker.icon = toBitmap(ContextCompat.getDrawable(this, R.drawable.map_marker_med))
+            "учреждение общественного питания" -> marker.icon = toBitmap(ContextCompat.getDrawable(this, R.drawable.map_marker_restoran))
+            "учреждение социального назначения" -> marker.icon = toBitmap(ContextCompat.getDrawable(this, R.drawable.map_marker_social))
+            "учреждение санаторно-курортного назначения" -> marker.icon = toBitmap(ContextCompat.getDrawable(this, R.drawable.map_marker_sanatoriy))
+            "учреждение спорта" -> marker.icon = toBitmap(ContextCompat.getDrawable(this, R.drawable.map_marker_sport))
+            "учреждение культурно-зрелищного назначения" -> marker.icon = toBitmap(ContextCompat.getDrawable(this, R.drawable.map_marker_theatre))
+            "учреждение туристического назначения" -> marker.icon = toBitmap(ContextCompat.getDrawable(this, R.drawable.map_marker_turizm))
+            "учреждение бытового назначения" -> marker.icon = toBitmap(ContextCompat.getDrawable(this, R.drawable.map_marker_house))
+            else -> {
+               // marker.icon = ContextCompat.getDrawable(this, org.osmdroid.library.R.drawable.marker_default)
+            }
+        }
+
         marker.title = name
-        marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER)
+        //marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER)
         //Появление карточки при нажати на объект (Обработка нажатия на маркер)
         marker.setOnMarkerClickListener { marker, mapView ->
             buildRoad(geoPoint)
@@ -401,7 +425,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             modalBottomSheet.rating = rating
             modalBottomSheet.availability = availability
             modalBottomSheet.geoPoint = geoPoint
-            modalBottomSheet.address = adress
+            modalBottomSheet.address = type
             modalBottomSheet.durationRoad = durationRoad
             modalBottomSheet.lengthRoad = lengthRoad
             modalBottomSheet.show(supportFragmentManager, ModalBottomSheet.TAG)
@@ -441,7 +465,21 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
 
+    fun toBitmap(drawable: Drawable?): BitmapDrawable {
 
+// Преобразование Drawable в Bitmap
+        val bitmap = drawable?.toBitmap()
+
+// Указание новой ширины и высоты для Bitmap
+        val newWidth = 120 // Новая ширина
+        val newHeight = 120 // Новая высота
+
+// Изменение размера Bitmap
+        val scaledBitmap = bitmap?.let { Bitmap.createScaledBitmap(it, newWidth, newHeight, false) }
+
+// Установка измененной иконки маркера
+        return BitmapDrawable(resources, scaledBitmap)
+    }
 
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {

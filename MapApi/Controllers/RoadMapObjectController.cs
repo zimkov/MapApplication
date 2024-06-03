@@ -27,7 +27,7 @@ namespace MapApi.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddRoadMapObject(int x, int y, string display_name)
+        public async Task<IActionResult> AddRoadMapObject(double x, double y, string display_name)
         {
             var roadMapObject = new RoadMapObject
             {

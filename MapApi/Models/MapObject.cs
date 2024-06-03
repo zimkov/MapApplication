@@ -1,5 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
 
 namespace MapApi.Models
 {
@@ -35,6 +37,19 @@ namespace MapApi.Models
 
         [Column("Availability")]
         [Required]
-        public string Availability { get; set; } = "нет информации о доступности";
+        [JsonConverter(typeof(JsonStringEnumConverter))]
+        public AvailabilityEnum? Availability{ get; set; }
+
+
+        
+    }
+
+    public enum AvailabilityEnum
+    {
+        Нет_информации_о_доступности,
+        Доступен,
+        Доступен_с_ограничениями,
+        Недоступен,
+        
     }
 }

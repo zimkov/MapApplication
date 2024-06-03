@@ -13,6 +13,19 @@ namespace MapApi.Context
         public DbSet<Comment> Comment => Set<Comment>();
         public DbSet<Models.Route> Route => Set<Models.Route>();
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Comment>()
+                .HasOne(c => c.User)
+                .WithMany()
+                .HasForeignKey(c => c.UserId);
+
+            modelBuilder.Entity<Comment>()
+                .HasOne(c => c.MapObject)
+                .WithMany()
+                .HasForeignKey(c => c.MapObjectId);
+        }
+
         public ApplicationContext(DbContextOptions<ApplicationContext> options)
             : base(options)
         {

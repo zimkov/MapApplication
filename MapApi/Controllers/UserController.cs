@@ -28,13 +28,14 @@ namespace MapApi.Controllers
         }
        
         [HttpPost]
-        public async Task<IActionResult> AddUser(string name, UserStatus type, string email)
+        public async Task<IActionResult> AddUser(string name, UserStatus type, string email, string password)
         {
             var user = new User
             {
                 Name = name,
                 Type = type,
-                Email = email
+                Email = email,
+                Password = password
             };
             await _context.Users.AddAsync(user);
             await _context.SaveChangesAsync();
@@ -42,18 +43,18 @@ namespace MapApi.Controllers
             return Ok();
         }
 
-        [HttpGet("{id}/getById")]
-        public async Task<ActionResult<User>> GetUserById(int id)
-        {
-            var user = await _context.Users.FindAsync(id);
-            if (user == null)
-            {
-                return NotFound();
-            }
-            return user;
-        }
+        // [HttpGet("{id}")]
+        // public async Task<ActionResult<User>> GetUserById(int id)
+        // {
+        //     var user = await _context.Users.FindAsync(id);
+        //     if (user == null)
+        //     {
+        //         return NotFound();
+        //     }
+        //     return user;
+        // }
 
-        [HttpGet("{email}/getByEmail")]
+        [HttpGet("{email}")]
         public async Task<ActionResult<User>> GetUserByEmail(string email)
         {
             if (_context.Users == null)
@@ -71,6 +72,7 @@ namespace MapApi.Controllers
             return await users.FirstOrDefaultAsync();
         }
 
+        
 
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)
