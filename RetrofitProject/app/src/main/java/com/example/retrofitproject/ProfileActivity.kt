@@ -5,14 +5,17 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import com.example.retrofitproject.DataClasses.User
 import com.google.android.material.navigation.NavigationView
 
 class ProfileActivity : AppCompatActivity(),  NavigationView.OnNavigationItemSelectedListener {
 
+    lateinit var user : User
     private lateinit var  drawerLayout: DrawerLayout
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,6 +40,18 @@ class ProfileActivity : AppCompatActivity(),  NavigationView.OnNavigationItemSel
                 .replace(R.id.fragment_container, HomeFragment()).commit()
             navigationView.setCheckedItem(R.id.nav_home)
         }
+
+        val username = navigationView.getHeaderView(0).findViewById<TextView>(R.id.userName)
+        val email = navigationView.getHeaderView(0).findViewById<TextView>(R.id.email)
+        user = intent.extras?.get("user") as User
+        username.text = user.name
+        email.text = user.email
+
+        val profileName = findViewById<TextView>(R.id.profileName)
+        val category = findViewById<TextView>(R.id.categoryUser)
+
+        profileName.text = user.name
+        category.text = "Категория инвалидности: " + user.type
 
     }
 

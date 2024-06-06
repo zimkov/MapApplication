@@ -333,7 +333,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         when(item.itemId){
             R.id.nav_home -> supportFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, HomeFragment()).commit()
-            R.id.nav_settings -> startActivity(Intent(this, ProfileActivity::class.java))
+            R.id.nav_settings -> {
+                val intent = Intent(this, ProfileActivity::class.java)
+                intent.putExtra("user", user)
+                startActivity(intent)
+            }
             R.id.nav_info -> startActivity(Intent(this, InfoActivity::class.java))
             R.id.nav_share -> Toast.makeText(this,"Поделиться", Toast.LENGTH_SHORT).show()
             R.id.nav_logout -> {
@@ -380,7 +384,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             "учреждение туристического назначения" -> marker.icon = toBitmap(ContextCompat.getDrawable(this, R.drawable.map_marker_turizm))
             "учреждение бытового назначения" -> marker.icon = toBitmap(ContextCompat.getDrawable(this, R.drawable.map_marker_house))
             else -> {
-               // marker.icon = ContextCompat.getDrawable(this, org.osmdroid.library.R.drawable.marker_default)
+               marker.icon = toBitmap(ContextCompat.getDrawable(this, R.drawable.map_marker_social))
             }
         }
 
